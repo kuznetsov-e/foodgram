@@ -65,5 +65,5 @@ class IngredientFilter(django_filters.FilterSet):
         fields = ['name']
 
     def filter_queryset(self, queryset):
-        decoded_name = unquote(self.data.get('name', '')).lower()
+        decoded_name = unquote(self.data.get('name', ''))
         return queryset.filter(name__istartswith=decoded_name)

@@ -1,8 +1,9 @@
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.response import Response
 
 from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
@@ -10,8 +11,8 @@ from .decorators import relationship_action_decorator
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import CommonPagination
 from .permissions import IsAuthenticated, IsAuthenticatedOrOwnerOrReadOnly
-from .serializers import (AddToListSerializer, IngredientSerializer,
-                          RecipeSerializer, TagSerializer)
+from .serializers import (IngredientSerializer, RecipeSerializer,
+                          RecipeShortSerializer, TagSerializer)
 
 
 class IngredientViewset(viewsets.ReadOnlyModelViewSet):
@@ -35,6 +36,9 @@ class RecipeViewset(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
+        if not self.request.user.is_authenticated:
+            raise AuthenticationFailed(
+                'Вы должны быть авторизованы, чтобы создать рецепт.')
         serializer.save(author=self.request.user)
 
     @relationship_action_decorator(url_path='favorite')
@@ -47,9 +51,16 @@ class RecipeViewset(viewsets.ModelViewSet):
         recipe = self.get_object()
         return self._toggle_recipe_relation(ShoppingCart, request, recipe)
 
+    @action(detail=True, methods=['get'], url_path='get-link',
+            permission_classes=[permissions.AllowAny])
+    def get_link(self, request, pk=None):
+        recipe = self.get_object()
+        base_url = request.build_absolute_uri('/')[:-1]
+        short_link = f'{base_url}/s/{recipe.short_code}'
+        return Response({'short-link': short_link})
+
     @action(detail=False, methods=['get'],
-            permission_classes=[IsAuthenticated],
-            url_path='download_shopping_cart')
+            permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         user = request.user
         shopping_cart_items = ShoppingCart.objects.filter(user=user)
@@ -84,7 +95,7 @@ class RecipeViewset(viewsets.ModelViewSet):
             _, created = model.objects.get_or_create(
                 user=user, recipe=recipe)
             if created:
-                serializer = AddToListSerializer(
+                serializer = RecipeShortSerializer(
                     recipe)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
@@ -96,3 +107,8 @@ class RecipeViewset(viewsets.ModelViewSet):
             if deleted:
                 return Response(status=status.HTTP_204_NO_CONTENT)
             raise ValidationError({'detail': 'Рецепт не найден в списке.'})
+
+
+def short_link_redirect(request, short_code):
+    recipe = get_object_or_404(Recipe, short_code=short_code)
+    return redirect(f'/recipes/{recipe.id}')

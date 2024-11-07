@@ -1,5 +1,3 @@
-# yourapp/fields.py
-
 import base64
 import uuid
 

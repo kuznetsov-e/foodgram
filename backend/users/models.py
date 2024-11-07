@@ -3,6 +3,11 @@ from django.db import models
 
 
 class FoodgramUser(AbstractUser):
+    email = models.EmailField(unique=True, blank=False, null=False)
+    username = models.CharField(
+        max_length=150, unique=True, blank=False, null=False)
+    first_name = models.CharField(max_length=30, blank=False, null=False)
+    last_name = models.CharField(max_length=30, blank=False, null=False)
     avatar = models.ImageField(
         upload_to='profile_pictures/', blank=True, null=True)
     is_subscribed = models.BooleanField(default=False)
