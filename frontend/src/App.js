@@ -7,7 +7,7 @@ import api from "./api";
 import styles from "./styles.module.css";
 
 import {
-  // About,
+  About,
   Main,
   Cart,
   SignIn,
@@ -22,7 +22,7 @@ import {
   NotFound,
   UpdateAvatar,
   ResetPassword,
-  // Technologies,
+  Technologies
 } from "./pages";
 
 import { AuthContext, UserContext } from "./contexts";
@@ -34,7 +34,7 @@ function App() {
   const [authError, setAuthError] = useState({ submitError: "" });
   const [registrError, setRegistrError] = useState({ submitError: "" });
   const [changePasswordError, setChangePasswordError] = useState({
-    submitError: "",
+    submitError: ""
   });
 
   const registration = ({
@@ -42,7 +42,7 @@ function App() {
     password,
     username,
     first_name,
-    last_name,
+    last_name
   }) => {
     api
       .signup({ email, password, username, first_name, last_name })
@@ -95,7 +95,7 @@ function App() {
     api
       .signin({
         email,
-        password,
+        password
       })
       .then((res) => {
         if (res.auth_token) {
@@ -127,7 +127,7 @@ function App() {
   const onPasswordReset = ({ email }) => {
     api
       .resetPassword({
-        email,
+        email
       })
       .then((res) => {
         history.push("/signin");
@@ -167,7 +167,7 @@ function App() {
     api
       .getRecipes({
         page: 1,
-        is_in_shopping_cart: Number(true),
+        is_in_shopping_cart: Number(true)
       })
       .then((res) => {
         const { count } = res;
@@ -294,8 +294,7 @@ function App() {
             </Route>
 
             <Route exact path="/about">
-              <NotFound />
-              {/* <About component={About} /> */}
+              {<About component={About} />}
             </Route>
 
             <Route exact path="/reset-password">
@@ -303,8 +302,7 @@ function App() {
             </Route>
 
             <Route exact path="/technologies">
-              <NotFound />
-              {/* <Technologies component={Technologies}/> */}
+              {<Technologies component={Technologies} />}
             </Route>
 
             <Route exact path="/recipes">

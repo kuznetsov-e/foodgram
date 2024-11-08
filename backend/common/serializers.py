@@ -9,6 +9,12 @@ User = get_user_model()
 
 
 class UserSerializer(BaseUserSerializer):
+    """
+    Сериализатор для пользователя, расширяющий базовый сериализатор
+    из Djoser. Добавляет поле аватара (с использованием base64) и
+    информацию о подписке текущего пользователя на данного пользователя.
+    """
+
     avatar = Base64ImageField(max_length=None, use_url=True)
     is_subscribed = serializers.SerializerMethodField()
 
