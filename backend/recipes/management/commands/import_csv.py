@@ -8,14 +8,14 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    help = 'Import ingredients from a CSV file'
+    help = 'Импорт ингредиентов из CSV-файла'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--file',
             type=str,
             default=os.path.join(settings.BASE_DIR, '../data/ingredients.csv'),
-            help='Путь к CSV файлу с ингредиентами.',
+            help='Путь к CSV-файлу с ингредиентами.',
         )
 
     def handle(self, *args, **kwargs):
@@ -32,9 +32,9 @@ class Command(BaseCommand):
                     )
 
             self.stdout.write(self.style.SUCCESS(
-                "Ингредиенты успешно импортированы из CSV."))
+                'Ингредиенты успешно импортированы из CSV.'))
 
         except FileNotFoundError:
-            self.stdout.write(self.style.ERROR(f"Файл не найден: {file_path}"))
+            self.stdout.write(self.style.ERROR(f'Файл не найден: {file_path}'))
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"Произошла ошибка: {str(e)}"))
+            self.stdout.write(self.style.ERROR(f'Произошла ошибка: {str(e)}'))
