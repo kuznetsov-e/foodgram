@@ -6,11 +6,13 @@ volumes:
   media:
   # Раскомментируйте, если нужно импортировать csv-данные:
   # python manage.py import_csv
-  data:
+
+  # data:
 
   # Раскомментируйте, если нужен доступ к документации
-  docs:
-    driver: local
+
+  # docs:
+  #   driver: local
 
 services:
   db:
@@ -43,4 +45,5 @@ services:
       - media:/media/
 
       # Раскомментируйте, если нужен доступ к документации
-      - ./docs:/usr/share/nginx/html/api/docs
+      
+      # - ./docs:/usr/share/nginx/html/api/docs
