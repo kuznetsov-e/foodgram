@@ -30,7 +30,7 @@ ERROR_RECIPE_ALREADY_ADDED = 'Рецепт уже добавлен.'
 ERROR_RECIPE_NOT_FOUND = 'Рецепт не найден в списке.'
 ERROR_CART_EMPTY = 'Ваша корзина пуста.'
 
-# URL пути для разных действий
+# URL пути
 URL_SUBSCRIBE_PATH = 'subscribe'
 URL_SUBSCRIPTIONS_PATH = 'subscriptions'
 URL_CURRENT_USER_PATH = 'me'
