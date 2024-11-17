@@ -9,6 +9,7 @@ NAME_MAX_LENGTH = 150
 RECIPE_NAME_MAX_LENGTH = 256
 SHORT_CODE_MAX_LENGTH = 5
 DEFAULT_MAX_LENGTH = 75
+ABOVE_ZERO_VALUE = 1
 
 # Сообщения об ошибках
 ERROR_INVALID_USERNAME = (
@@ -17,10 +18,10 @@ ERROR_EMPTY_INGREDIENTS = 'Рецепт должен содержать хотя
 ERROR_DUPLICATE_INGREDIENTS = 'Ингредиенты не должны повторяться.'
 ERROR_EMPTY_TAGS = 'Рецепт должен содержать хотя бы один тег.'
 ERROR_DUPLICATE_TAGS = 'Теги не должны повторяться.'
-ERROR_MISSING_INGREDIENTS_FIELD = (
-    'Поле "ingredients" обязательно для заполнения.')
-ERROR_MISSING_TAGS_FIELD = 'Поле "tags" обязательно для заполнения.'
-
+ERROR_RECIPES_LIMIT_NOT_DIGIT = (
+    'Неверное значение для "recipes_limit". '
+    'Оно должно быть положительным целым числом'
+)
 ERROR_CANNOT_SUBSCRIBE_TO_SELF = 'Вы не можете подписаться на себя.'
 ERROR_ALREADY_SUBSCRIBED = 'Вы уже подписаны на этого пользователя.'
 ERROR_SUBSCRIPTION_NOT_FOUND = 'Подписка не найдена.'

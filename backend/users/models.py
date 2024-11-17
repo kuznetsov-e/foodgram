@@ -42,11 +42,21 @@ class Subscription(models.Model):
     user = models.ForeignKey(
         FoodgramUser,
         related_name='subscriptions',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь')
     subscribed_to = models.ForeignKey(
         FoodgramUser,
         related_name='subscribers',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        verbose_name='Подписан на')
 
     class Meta:
-        unique_together = ('user', 'subscribed_to')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'subscribed_to'], name='unique_subscription')
+        ]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user} подписан на {self.subscribed_to}'

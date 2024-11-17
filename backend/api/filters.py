@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Exists, OuterRef
 import django_filters
 
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
 User = get_user_model()
 
@@ -12,16 +12,17 @@ User = get_user_model()
 class RecipeFilter(django_filters.FilterSet):
     """Фильтр для рецептов по тегам, избранному, корзине и автору."""
 
-    tags = django_filters.CharFilter(method='filter_by_tags')
+    tags = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        field_name='tags__slug',
+        to_field_name='slug')
     is_favorited = django_filters.CharFilter(method='filter_by_favorites')
     is_in_shopping_cart = django_filters.CharFilter(
         method='filter_by_shopping_cart')
-    author = django_filters.NumberFilter(
-        field_name='author_id', lookup_expr='exact')
 
     class Meta:
         model = Recipe
-        fields = ['tags', 'is_favorited', 'is_in_shopping_cart', 'author']
+        fields = ('tags', 'is_favorited', 'is_in_shopping_cart', 'author',)
 
     def filter_by_favorites(self, queryset, name, value):
         """Фильтрует рецепты, добавленные в избранное текущим пользователем."""
@@ -32,14 +33,6 @@ class RecipeFilter(django_filters.FilterSet):
         """Фильтрует рецепты, добавленные в корзину текущим пользователем."""
         return self._filter_by_relation(queryset, name, value, ShoppingCart,
                                         'recipe')
-
-    def filter_by_tags(self, queryset, name, value):
-        """Фильтрует рецепты по указанным тегам."""
-        tag_list = self.request.query_params.getlist('tags')
-
-        if not tag_list:
-            return queryset
-        return queryset.filter(tags__slug__in=tag_list).distinct()
 
     def _filter_by_relation(
             self, queryset, name, value, model, relation_field):
@@ -71,7 +64,7 @@ class IngredientFilter(django_filters.FilterSet):
 
     class Meta:
         model = Ingredient
-        fields = ['name']
+        fields = ('name',)
 
     def filter_queryset(self, queryset):
         """

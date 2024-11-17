@@ -1,6 +1,24 @@
+from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 
+from common.constants import ERROR_EMPTY_INGREDIENTS
 from .models import Ingredient, Recipe, RecipeIngredient, Tag
+
+
+class RecipeIngredientInlineFormSet(forms.BaseInlineFormSet):
+    """
+    Проверяет, что у рецепта есть хотя бы один ингредиент. Если все формы
+    удалены или пусты, генерирует ошибку валидации.
+    """
+
+    def clean(self):
+        super().clean()
+        if not any(
+                form.cleaned_data and not form.cleaned_data.get(
+                    'DELETE', False)
+                for form in self.forms):
+            raise ValidationError(ERROR_EMPTY_INGREDIENTS)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -12,6 +30,7 @@ class RecipeIngredientInline(admin.TabularInline):
     """
     model = RecipeIngredient
     extra = 1
+    formset = RecipeIngredientInlineFormSet
 
 
 @admin.register(Recipe)
