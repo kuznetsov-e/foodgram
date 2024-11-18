@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, RegexValidator
 from django.db import models
 
 from common.constants import (AVATAR_UPLOAD_FOLDER, EMAIL_MAX_LENGTH,
+                              ERROR_CANNOT_SUBSCRIBE_TO_SELF,
                               ERROR_INVALID_USERNAME, NAME_MAX_LENGTH, REGEX)
 
 
@@ -60,3 +62,11 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.user} подписан на {self.subscribed_to}'
+
+    def clean(self):
+        if self.user == self.subscribed_to:
+            raise ValidationError(ERROR_CANNOT_SUBSCRIBE_TO_SELF)
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)

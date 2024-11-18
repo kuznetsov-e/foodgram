@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 
 from common.constants import ERROR_EMPTY_INGREDIENTS
-from .models import Ingredient, Recipe, RecipeIngredient, Tag
+from .models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
 
 
 class RecipeIngredientInlineFormSet(forms.BaseInlineFormSet):
@@ -65,3 +65,8 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe')

@@ -212,7 +212,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Проверяет наличие полей 'ингредиенты' и 'теги' и их заполнение.
+        Проверяет наличие полей 'ингредиенты' и 'теги',
+        их заполнение и уникальность.
         """
         required_fields = {
             'recipe_ingredients': ERROR_EMPTY_INGREDIENTS,
@@ -223,25 +224,18 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             if field not in data or not data[field]:
                 raise serializers.ValidationError({field: error_message})
 
-        self.validate_ingredients(data['recipe_ingredients'])
-        self.validate_tags(data['tags'])
-
-        return data
-
-    def validate_ingredients(self, value):
         seen_ids = set()
-        for ingredient in value:
+        for ingredient in data['recipe_ingredients']:
             ingredient_id = ingredient['id']
             if ingredient_id in seen_ids:
-                raise serializers.ValidationError(ERROR_DUPLICATE_INGREDIENTS)
+                raise serializers.ValidationError(
+                    {'recipe_ingredients': ERROR_DUPLICATE_INGREDIENTS})
             seen_ids.add(ingredient_id)
-        return value
 
-    def validate_tags(self, value):
-        unique_tags = set(value)
-        if len(unique_tags) != len(value):
-            raise serializers.ValidationError(ERROR_DUPLICATE_TAGS)
-        return value
+        if len(data['tags']) != len(set(data['tags'])):
+            raise serializers.ValidationError({'tags': ERROR_DUPLICATE_TAGS})
+
+        return data
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags')

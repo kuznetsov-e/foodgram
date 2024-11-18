@@ -133,19 +133,23 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.ingredient.name} (' \
+        return (
+            f'{self.ingredient.name} ('
             f'{self.amount} {self.ingredient.measurement_unit})'
+        )
 
 
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favorites')
+        related_name='favorites',
+        verbose_name='Пользователь')
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='favorited_by')
+        related_name='favorited_by',
+        verbose_name='Избранный рецепт')
 
     class Meta:
         verbose_name = 'Избранное'
